@@ -1,4 +1,5 @@
-# gloomhaven_deck_stats
+# Gloomhaven Deck Statistics
+A rebuild of https://github.com/epoblaguev/gloomhaven-perk-calculator in vue js for personal practice.
 
 ## Project setup
 ```
