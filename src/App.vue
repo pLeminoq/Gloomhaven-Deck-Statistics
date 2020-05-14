@@ -4,9 +4,12 @@
       id="testbutton"
       @click="onButtonClick"
     >
-      Add a critical Hit!
+      Add a +1 roller!
     </button>
     <AvgDamageChart
+      :deck="deck"
+    />
+    <DamageHistogram
       :deck="deck"
     />
   </div>
@@ -16,11 +19,13 @@
 const model = require('./model');
 
 import AvgDamageChart from './components/AvgDamageChart.vue';
+import DamageHistogram from './components/DamageHistogram.vue';
 
 export default {
   name: 'App',
   components: {
-    AvgDamageChart
+    AvgDamageChart,
+    DamageHistogram
   },
   data: function() {
     return {
@@ -29,7 +34,7 @@ export default {
   },
   methods: {
     onButtonClick: function() {
-      this.deck.addCard(new model.cards.CriticalHit());
+      this.deck.addCard(new model.cards.PlusOneRoller());
     }
   }
 }

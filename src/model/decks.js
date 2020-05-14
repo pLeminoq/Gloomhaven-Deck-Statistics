@@ -73,7 +73,6 @@ class Default extends Deck {
 
     this.addCard(new _cards.CriticalMiss());
     this.addCard(new _cards.CriticalHit());
-    this.addCard(new _cards.CriticalHit());
     this.addCard(new _cards.MinusTwo());
     this.addCard(new _cards.PlusTwo());
     for (let i = 0; i < 5; i++) { this.addCard(new _cards.MinusOne());}

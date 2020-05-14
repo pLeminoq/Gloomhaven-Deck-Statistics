@@ -1,6 +1,7 @@
 class Card {
-  constructor(value, reshuffle, remove) {
+  constructor(value, reshuffle, roller, remove) {
     this.value = value;
+    this.roller = (roller !== undefined) ? roller : false;
     this.reshuffle = (reshuffle !== undefined) ? reshuffle : false;
     this.remove = (remove !== undefined) ? remove : false;
   }
@@ -70,6 +71,12 @@ class PlusOne extends Card {
   }
 }
 
+class PlusOneRoller extends Card {
+  constructor() {
+    super(1, false, true);
+  }
+}
+
 class PlusTwo extends Card {
   constructor() {
     super(2);
@@ -84,3 +91,4 @@ module.exports.MinusOne = MinusOne;
 module.exports.Zero = Zero;
 module.exports.PlusOne = PlusOne;
 module.exports.PlusTwo = PlusTwo;
+module.exports.PlusOneRoller = PlusOneRoller;

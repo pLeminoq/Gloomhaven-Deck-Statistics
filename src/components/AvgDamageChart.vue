@@ -45,14 +45,21 @@ export default {
     computeAvgDamage: function(baseDamage, deck) {
       deck.shuffle();
 
-      const draws = 10000;
+      const turns = 500;
       let averageDamage = 0.0;
-      for (let i = 0; i < draws; ++i) {
-        averageDamage += deck.draw().damage(baseDamage);
+      console.log('Ich mache was 2.0')
+      for (let i = 0; i < turns; ++i) {
+        let card = deck.draw();
+        while (card.roller) {
+          averageDamage += Math.max(card.damage(baseDamage),0);
+          card = deck.draw();
+        }
+        averageDamage += Math.max(card.damage(baseDamage),0);
+
       }
       deck.restore();
 
-      return averageDamage / draws;
+      return averageDamage / turns;
     }
   }
 }
