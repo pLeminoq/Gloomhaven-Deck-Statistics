@@ -1,17 +1,36 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <button
+      id="testbutton"
+      @click="onButtonClick"
+    >
+      Add a critical Hit!
+    </button>
+    <AvgDamageChart
+      :deck="deck"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+const model = require('./model');
+
+import AvgDamageChart from './components/AvgDamageChart.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AvgDamageChart
+  },
+  data: function() {
+    return {
+      deck: new model.decks.Default(),
+    }
+  },
+  methods: {
+    onButtonClick: function() {
+      this.deck.addCard(new model.cards.CriticalHit());
+    }
   }
 }
 </script>
@@ -24,5 +43,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+#testbutton {
+  width: 20%;
+  height: 10%;
 }
 </style>
