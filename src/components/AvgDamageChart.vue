@@ -29,7 +29,7 @@ export default {
   computed: {
     avgDamage: function() {
       return this.baseDamages.map(baseDamage =>
-        this.computeAvgDamage(baseDamage, this.deck));
+        this.computeAvgDamage(baseDamage, this.deck.copy()));
     },
     chartData: function() {
       return {

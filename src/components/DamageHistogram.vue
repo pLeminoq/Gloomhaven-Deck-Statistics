@@ -1,5 +1,17 @@
 <template>
   <div id="damage-hist">
+    <button
+      id="baseDamageDown"
+      @click="onButtonDown"
+    >
+      -
+    </button>
+    <button
+      id="baseDamageUp"
+      @click="onButtonUp"
+    >
+      +
+    </button>
     <BarChart
       id="chart"
       :chart-data="chartData"
@@ -17,7 +29,8 @@ export default {
   },
   data: function() {
     return {
-      baseDamage: 1
+      baseDamage: 1,
+      damageDist: {}
     }
   },
   props: {
@@ -26,23 +39,44 @@ export default {
       type: Object
     }
   },
+
+  watch: {
+    deck: function(val){
+      console.log('Hallo Tamino')
+      this.damageDist = this.computeDamageDist(this.baseDamage, val.copy());
+      for (let i=0; i<10; ++i){
+        let tempDamageDist = this.computeDamageDist(this.baseDamage, val.copy());
+        for (let propertyName in tempDamageDist){
+          if (this.damageDist[propertyName] === undefined){
+            this.damageDist[propertyName] = tempDamageDist[propertyName]
+          }
+          else {
+            this.damageDist[propertyName] += tempDamageDist[propertyName]
+          }
+        }
+      }
+    }
+  },
   computed: {
     chartData: function() {
-      const DamageDist = this.computeDamageDist(this.baseDamage, this.deck);
-      const damageValues = Object.getOwnPropertyNames(DamageDist).map(key => parseInt(key));
+      const damageValues = Object.getOwnPropertyNames(this.damageDist).map(key => parseInt(key));
       let xs = [];
       let ys = [];
-      for (let i = Math.min(damageValues); i <= Math.max(damageValues); ++i){
+      for (let i = Math.min(...damageValues); i <= Math.max(...damageValues); ++i){
+
         xs.push(i)
-        if (DamageDist['' + i] === undefined){
-          DamageDist['' + i] = 0
+        if (this.damageDist['' + i] === undefined){
+          ys.push(0)
         }
-        ys.push(DamageDist['' + i])
+        else{
+          ys.push(this.damageDist['' + i])
+        }
+
       }
       return {
         labels: xs,
         datasets: [{
-          label: 'Damage Distribution',
+          label: 'Damage Distribution for Base Attack of ' + this.baseDamage,
           data: ys
         }]
       };
@@ -50,6 +84,7 @@ export default {
   },
   methods: {
     computeDamageDist: function(baseDamage, deck) {
+
       deck.shuffle();
 
       const turns = 1000;
@@ -72,6 +107,14 @@ export default {
       deck.restore();
 
       return damageDist;
+    },
+
+    onButtonDown: function(){
+      this.baseDamage = Math.max(0, this.baseDamage-1);
+    },
+
+    onButtonUp: function(){
+      this.baseDamage = this.baseDamage+1;
     }
   }
 }

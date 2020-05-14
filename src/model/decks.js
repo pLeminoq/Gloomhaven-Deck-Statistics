@@ -6,6 +6,17 @@ class Deck {
     this.discarded = []
   }
 
+  copy(){
+    let deck = new Deck();
+    for (let i in this.cards){
+        deck.cards.push(this.cards[i]);
+    }
+    for (let i in this.discarded){
+        deck.discarded.push(this.discarded[i]);
+    }
+    return deck; 
+  }
+
   shuffle() {
     // shuffle an array in place according to the fisher shuffle:
     // https://en.wikipedia.org/wiki/Fisher-Yates_shuffle
