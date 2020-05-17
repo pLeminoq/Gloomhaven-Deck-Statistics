@@ -47,6 +47,16 @@ class Deck {
     return card;
   }
 
+  damage(baseDamage) {
+    let _damage = baseDamage;
+    let card = this.draw();
+    while (card.roller) {
+      _damage = Math.max(card.damage(_damage, 0));
+      card = this.draw();
+    }
+    return Math.max(card.damage(_damage), 0);
+  }
+
   addCard(card) {
     if (!(card instanceof _cards.Card)) {
       throw new Error('Can only add instance of card class!');
