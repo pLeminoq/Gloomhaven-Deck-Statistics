@@ -1,23 +1,26 @@
 <template>
   <div id="average-damage-chart">
-    <BarChart
-      id="chart"
-      :chart-data="chartData"
-    />
+    <canvas id="avg-chart" />
   </div>
 </template>
 
 <script>
-import BarChart from './BarChart.vue'
+const Chart = require('chart.js');
 
 export default {
   name: 'AvgDamageChart',
-  components: {
-    BarChart
-  },
   data: function() {
     return {
-      baseDamages: [0, 1, 2, 3, 4, 5]
+      chart: undefined,
+      stopComputation: false,
+      computationPromise: undefined,
+      turns: 0,
+      damageSums: [0, 0, 0, 0, 0, 0],
+      averages: [0, 0, 0, 0, 0, 0],
+      roundedAvgs: [0, 0, 0, 0, 0, 0],
+      baseDamages: [0, 1, 2, 3, 4, 5],
+      smallestChange: 0.01,
+      graphUpdateTimeInMS: 100,
     }
   },
   props: {
@@ -26,47 +29,92 @@ export default {
       type: Object
     }
   },
-  computed: {
-    avgDamage: function() {
-      return this.baseDamages.map(baseDamage =>
-        this.computeAvgDamage(baseDamage, this.deck.copy()));
-    },
-    chartData: function() {
-      return {
-        labels: this.baseDamages.map(val => '' + val),
+  mounted: function() {
+    console.log('Mounted so create chart!');
+    const ctx = document.getElementById('avg-chart').getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: this.baseDamages,
         datasets: [{
           label: 'Average Damage',
-          data: this.avgDamage
+          data: this.roundedAvgs
         }]
-      };
+      },
+      options: {}
+    });
+
+    console.log('Start initial simulation!');
+    this.computationPromise = this.simulateAvgDamage(this.deckCopy);
+  },
+  watch: {
+    deckCopy: async function(newValue) {
+      console.log('Deck changed!');
+      if (this.computationPromise !== undefined) {
+        console.log('Stop simulation!');
+        this.stopComputation = true;
+        await this.computationPromise;
+        console.log('Simulation stopped!');
+      }
+
+      this.simulateAvgDamage(newValue);
     }
   },
+  computed: {
+    deckCopy: function() {
+      return this.deck.copy();
+    },
+  },
   methods: {
-    computeAvgDamage: function(baseDamage, deck) {
-      deck.shuffle();
-
-      const turns = 500;
-      let averageDamage = 0.0;
-      console.log('Ich mache was 2.0')
-      for (let i = 0; i < turns; ++i) {
-        let card = deck.draw();
-        while (card.roller) {
-          averageDamage += Math.max(card.damage(baseDamage),0);
-          card = deck.draw();
+    simulateAvgDamage: async function(_deck) {
+      if (this.stopComputation) {
+        this.stopComputation = false;
+        this.turns = 0; 
+        this.damageSum = [0, 0, 0, 0, 0, 0];
+        for (let i in this.averages) {
+          this.averages[i] = 0;
         }
-        averageDamage += Math.max(card.damage(baseDamage),0);
-
+        this.chart.update(this.graphUpdateTimeInMS);
       }
-      deck.restore();
 
-      return averageDamage / turns;
-    }
+      setTimeout(() => {
+        // update damage sums
+        for (let i in this.baseDamages) {
+          const baseDamage = this.baseDamages[i];
+          for (let j = 0; j < 100; j++) {
+            this.damageSums[i] += _deck.damage(baseDamage);
+          }
+        }
+        this.turns += 100;
+        console.log(this.damageSums + ' - ' + this.turns);
+
+        // update chart data and chart
+        let continueIteration = false;
+        for (let i in this.averages) {
+          const avg = this.damageSums[i] / this.turns;
+          if (Math.abs(avg - this.averages[i]) > this.smallestChange) {
+            continueIteration = true;
+          }
+          this.averages[i] = avg;
+          this.roundedAvgs[i] = Math.round((avg +Number.EPSILON) * 100) / 100;
+          this.chart.update(this.graphUpdateTimeInMS);
+        }
+
+        // continue simulation
+        if (continueIteration) {
+          console.log('Continue Iteration');
+          this.computationPromise = this.simulateAvgDamage(_deck);
+        } else {
+          console.log('Stop iterating because change is to small');
+        }
+      }, this.graphUpdateTimeInMS);
+    },
   }
 }
 </script>
 
 <style scoped>
-#chart {
+#avg-chart {
   width: 45%
 }
 </style>
