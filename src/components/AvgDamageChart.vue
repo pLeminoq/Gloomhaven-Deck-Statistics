@@ -13,6 +13,7 @@ export default {
       smallestChange: 0.005,
       label: 'Average Damage',
       options: {
+        maintainAspectRatio: false,
         scales: {
           yAxes: [{
             ticks: {
@@ -81,6 +82,7 @@ export default {
 
 <style scoped>
 #container {
-  width: 45%
+  width: 40%;
+  height:40%;
 }
 </style>

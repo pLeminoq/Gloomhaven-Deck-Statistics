@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <canvas id="chart" />
+    <canvas  />
   </div>
 </template>
 
@@ -45,7 +45,8 @@ export default {
     }
   },
   mounted: function() {
-    const ctx = document.getElementById('chart').getContext('2d');
+    //const ctx = document.getElementById('chart').getContext('2d');
+    const ctx = this.$el.childNodes[0].getContext('2d');
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: {
