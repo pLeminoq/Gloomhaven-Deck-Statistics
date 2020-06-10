@@ -1,120 +1,86 @@
-<template>
-  <div id="average-damage-chart">
-    <canvas id="avg-chart" />
-  </div>
-</template>
-
 <script>
-const Chart = require('chart.js');
+import SimulationBarChart from './SimulationBarChart';
 
 export default {
   name: 'AvgDamageChart',
+  extends: SimulationBarChart,
   data: function() {
     return {
-      chart: undefined,
-      stopComputation: false,
-      computationPromise: undefined,
       turns: 0,
-      damageSums: [0, 0, 0, 0, 0, 0],
-      averages: [0, 0, 0, 0, 0, 0],
-      roundedAvgs: [0, 0, 0, 0, 0, 0],
+      turnsPerStep: 100,
       baseDamages: [0, 1, 2, 3, 4, 5],
-      smallestChange: 0.01,
-      graphUpdateTimeInMS: 100,
-    }
-  },
-  props: {
-    deck: {
-      require: true,
-      type: Object
-    }
-  },
-  mounted: function() {
-    console.log('Mounted so create chart!');
-    const ctx = document.getElementById('avg-chart').getContext('2d');
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: this.baseDamages,
-        datasets: [{
-          label: 'Average Damage',
-          data: this.roundedAvgs
-        }]
-      },
-      options: {}
-    });
-
-    console.log('Start initial simulation!');
-    this.computationPromise = this.simulateAvgDamage(this.deckCopy);
-  },
-  watch: {
-    deckCopy: async function(newValue) {
-      console.log('Deck changed!');
-      if (this.computationPromise !== undefined) {
-        console.log('Stop simulation!');
-        this.stopComputation = true;
-        await this.computationPromise;
-        console.log('Simulation stopped!');
+      damageSums: [0, 0, 0, 0, 0, 0],
+      smallestChange: 0.005,
+      label: 'Average Damage',
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              suggestedMax: 5 + 1
+            }
+          }]
+        }
       }
-
-      this.simulateAvgDamage(newValue);
     }
-  },
-  computed: {
-    deckCopy: function() {
-      return this.deck.copy();
-    },
   },
   methods: {
-    simulateAvgDamage: async function(_deck) {
-      if (this.stopComputation) {
-        this.stopComputation = false;
-        this.turns = 0; 
-        this.damageSum = [0, 0, 0, 0, 0, 0];
-        for (let i in this.averages) {
-          this.averages[i] = 0;
+    reset: function() {
+      this.turns = 0;
+      this.damageSums = [0, 0, 0, 0, 0, 0];
+      return {
+        xs: this.baseDamages,
+        ys: this.computeYs()
+      };
+    },
+    computeYs: function() {
+      let ys = [];
+      for (let i = 0; i < this.damageSums.length; i++) {
+        if (this.turns === 0) {
+          ys[i] = this.baseDamages[0];
+          continue;
         }
-        this.chart.update(this.graphUpdateTimeInMS);
+
+        ys[i] = this.damageSums[i] / this.turns;
+        ys[i] = Math.round((ys[i] + Number.EPSILON) * 100) / 100;
+      }
+      return ys;
+    },
+    converged: function(newValues, currentValues) {
+      const newYs = newValues.ys;
+      const currentYs = currentValues.ys;
+      if (newYs.length !== currentYs.length) {
+        return false;
       }
 
-      setTimeout(() => {
-        // update damage sums
-        for (let i in this.baseDamages) {
-          const baseDamage = this.baseDamages[i];
-          for (let j = 0; j < 100; j++) {
-            this.damageSums[i] += _deck.damage(baseDamage);
-          }
+      for (let i = 0; i < newYs.length; i++) {
+        if (Math.abs(newYs[i] - currentYs[i]) > this.smallestChange) {
+          return false;
         }
-        this.turns += 100;
-        console.log(this.damageSums + ' - ' + this.turns);
-
-        // update chart data and chart
-        let continueIteration = false;
-        for (let i in this.averages) {
-          const avg = this.damageSums[i] / this.turns;
-          if (Math.abs(avg - this.averages[i]) > this.smallestChange) {
-            continueIteration = true;
-          }
-          this.averages[i] = avg;
-          this.roundedAvgs[i] = Math.round((avg +Number.EPSILON) * 100) / 100;
-          this.chart.update(this.graphUpdateTimeInMS);
-        }
-
-        // continue simulation
-        if (continueIteration) {
-          console.log('Continue Iteration');
-          this.computationPromise = this.simulateAvgDamage(_deck);
-        } else {
-          console.log('Stop iterating because change is to small');
-        }
-      }, this.graphUpdateTimeInMS);
+      }
+      return true;
     },
+    step: function(_deck) {
+      // update damage sums
+      for (let i = 0; i < this.baseDamages.length; ++i) {
+        const baseDamage = this.baseDamages[i];
+        for (let j = 0; j < this.turnsPerStep; j++) {
+          this.damageSums[i] += _deck.damage(baseDamage);
+        }
+      }
+      this.turns += this.turnsPerStep;
+
+      return {
+        xs: this.baseDamages,
+        ys: this.computeYs()
+      };
+    }
   }
 }
 </script>
 
 <style scoped>
-#avg-chart {
+#container {
   width: 45%
 }
 </style>
