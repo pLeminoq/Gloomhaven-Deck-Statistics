@@ -12,6 +12,8 @@
     <DamageHistogram
       :deck="deck"
     />
+    <CharacterComponent
+    />
   </div>
 </template>
 
@@ -20,12 +22,14 @@ const model = require('./model');
 
 import AvgDamageChart from './components/AvgDamageChart.vue';
 import DamageHistogram from './components/DamageHistogramChart.vue';
+import CharacterComponent from './components/CharacterComponent.vue';
 
 export default {
   name: 'App',
   components: {
     AvgDamageChart,
-    DamageHistogram
+    DamageHistogram,
+    CharacterComponent
   },
   data: function() {
     return {
