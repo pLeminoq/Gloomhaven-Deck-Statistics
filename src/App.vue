@@ -19,7 +19,7 @@
 const model = require('./model');
 
 import AvgDamageChart from './components/AvgDamageChart.vue';
-import DamageHistogram from './components/DamageHistogram.vue';
+import DamageHistogram from './components/DamageHistogramChart.vue';
 
 export default {
   name: 'App',

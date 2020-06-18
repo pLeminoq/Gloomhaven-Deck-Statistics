@@ -7,10 +7,10 @@ export default {
   data: function() {
     return {
       turns: 0,
-      turnsPerStep: 100,
+      turnsPerStep: 130,
       baseDamages: [0, 1, 2, 3, 4, 5],
       damageSums: [0, 0, 0, 0, 0, 0],
-      smallestChange: 0.005,
+      smallestChange: 0.001,
       label: 'Average Damage',
       options: {
         maintainAspectRatio: false,

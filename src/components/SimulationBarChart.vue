@@ -17,7 +17,7 @@ export default {
       xs: [],
       ys: [],
       label: '',
-      graphUpdateTimeInMS: 100,
+      graphUpdateTimeInMS: 175,
       options: {},
     }
   },
