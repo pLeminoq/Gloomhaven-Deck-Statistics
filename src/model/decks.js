@@ -88,9 +88,15 @@ class Deck {
   }
 
   print() {
+    let _deck = {}
     for (let i = 0; i < this.cards.length; i++) {
-      console.log(this.cards[i].print());
+      const key = this.cards[i].print();
+      if (_deck[key] === undefined) {
+        _deck[key] = 0;
+      }
+      _deck[key]++;
     }
+    console.log(_deck);
   }
 }
 
