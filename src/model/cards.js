@@ -1,9 +1,10 @@
 class Card {
-  constructor(value, reshuffle, roller, remove) {
+  constructor(value, reshuffle, roller, remove, status) {
     this.value = value;
     this.roller = (roller !== undefined) ? roller : false;
     this.reshuffle = (reshuffle !== undefined) ? reshuffle : false;
     this.remove = (remove !== undefined) ? remove : false;
+    this.status = (status !== undefined) ? status : false;
   }
 
   damage(baseDamage) {
@@ -14,6 +15,9 @@ class Card {
     let res = '';
     if (this.value > 0) {
       res += '+';
+    }
+    if (this.roller) {
+      return res + this.value + 'roller'
     }
     return res + this.value;
   }

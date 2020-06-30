@@ -10,7 +10,7 @@ export default {
       turnsPerStep: 400,
       baseDamage: 3,
       damageDist: {},
-      smallestChange: 0.001,
+      smallestChange: 0.002,
       label: 'Distribution of Shuffle Time',
       options: {
         maintainAspectRatio: false,

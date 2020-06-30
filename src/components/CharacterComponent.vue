@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     onClick: function(ev, perk){
-      console.log(ev.target.checked);
+      //console.log(ev.target.checked);
       console.log('before:');
       this.deck.print()
       if (ev.target.checked){

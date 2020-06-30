@@ -79,9 +79,12 @@ class Deck {
 
   removeCard(card) {
     const cardType = (typeof(card) === String) ? card : card.constructor.name;
+    //console.log(cardType);
     for (let i = 0; i < this.cards.length; i++) {
+      //console.log(this.cards[i].constructor.name);
       if (this.cards[i].constructor.name === cardType) {
-        this.cards.pop(i);
+        console.log(this.cards[i].print())
+        this.cards.splice(i,1);
         return;
       }
     }

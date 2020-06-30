@@ -32,6 +32,7 @@ class Perk {
 
     for (let i in this.removeCards) {
       deck.addCard(this.removeCards[i]);
+      console.log(this.removeCards[i]);
     }
 
   }
