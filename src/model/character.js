@@ -6,7 +6,7 @@ class Character {
   }
 
   addPerk(perk, count) {
-    this.perk.push({perk, count})
+    this.perks.push({perk, count})
   }
 }
 

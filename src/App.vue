@@ -12,7 +12,11 @@
     <DamageHistogram
       :deck="deck"
     />
+    <ShuffleTimeDistribution
+      :deck="deck"
+    />
     <CharacterComponent
+      :deck="deck"
     />
   </div>
 </template>
@@ -22,6 +26,7 @@ const model = require('./model');
 
 import AvgDamageChart from './components/AvgDamageChart.vue';
 import DamageHistogram from './components/DamageHistogramChart.vue';
+import ShuffleTimeDistribution from './components/SuffleTimeDistributionChart.vue';
 import CharacterComponent from './components/CharacterComponent.vue';
 
 export default {
@@ -29,7 +34,8 @@ export default {
   components: {
     AvgDamageChart,
     DamageHistogram,
-    CharacterComponent
+    CharacterComponent,
+    ShuffleTimeDistribution
   },
   data: function() {
     return {

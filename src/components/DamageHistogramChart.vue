@@ -30,10 +30,8 @@ export default {
     computeData() {
       const damageValues = Object.getOwnPropertyNames(this.damageDist).map(key => parseInt(key));
       damageValues.pop();
-      console.log(Object.getOwnPropertyNames(this.damageDist));
       let xs = [];
       let ys = [];
-      console.log(damageValues);
       for (let i = Math.min(...damageValues); i <= Math.max(...damageValues); ++i){
 
         xs.push(i)
@@ -44,8 +42,6 @@ export default {
           ys.push(this.damageDist['' + i] / this.turns)
         }
       }
-      console.log(xs);
-      console.log(ys);
       return {
         xs: xs,
         ys: ys
@@ -53,7 +49,6 @@ export default {
     },
 
     step: function(deck) {
-      console.log('step');
       for (let i=0; i < this.turnsPerStep; i++) {
         const key = '' + deck.damage(this.baseDamage);
         if (this.damageDist[key] === undefined) {
@@ -63,23 +58,19 @@ export default {
       }
       this.turns += this.turnsPerStep;
 
-      console.log(this.damageDist);
       return this.computeData();
     },
 
     reset: function() {
-      console.log('reset');
       this.turns = 0;
       this.damageDist = {};
       return this.computeData();
     },
 
     converged: function(newValues, currentValues) {
-      console.log('converged');
+      //console.log('converged');
       const newYs = newValues.ys;
       const currentYs = currentValues.ys;
-      console.log(newYs);
-      console.log(currentYs);
       if (newYs.length !== currentYs.length) {
         return false;
       }

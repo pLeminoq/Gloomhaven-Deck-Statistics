@@ -14,7 +14,7 @@ class Deck {
     for (let i in this.discarded){
         deck.discarded.push(this.discarded[i]);
     }
-    return deck; 
+    return deck;
   }
 
   shuffle() {
@@ -67,16 +67,11 @@ class Deck {
   }
 
   removeCard(card) {
-    console.log(typeof(card) + ' = ' + (typeof(card) === 'string'));
     const cardType = (typeof(card) === String) ? card : card.constructor.name;
-    console.log('Remove card by type: ' + cardType);
     for (let i = 0; i < this.cards.length; i++) {
       if (this.cards[i].constructor.name === cardType) {
-        console.log('Found card: ' + i);
         this.cards.pop(i);
         return;
-      } else {
-        console.log('Does not match type: ' + this.cards[i].constructor.name);
       }
     }
   }
