@@ -7,7 +7,7 @@ export default {
   data: function() {
     return {
       turns: 0,
-      turnsPerStep: 120,
+      turnsPerStep: 400,
       baseDamage: 3,
       damageDist: {},
       smallestChange: 0.001,
@@ -30,10 +30,9 @@ export default {
     computeData() {
       const damageValues = Object.getOwnPropertyNames(this.damageDist).map(key => parseInt(key));
       damageValues.pop();
-      console.log(Object.getOwnPropertyNames(this.damageDist));
       let xs = [];
       let ys = [];
-      console.log(damageValues);
+      //let expectedTurns = 0
       for (let i = Math.min(...damageValues); i <= Math.max(...damageValues); ++i){
 
         xs.push(i)
@@ -43,9 +42,9 @@ export default {
         else{
           ys.push(this.damageDist['' + i] / this.turns)
         }
+        //expectedTurns += i*this.damageDist['' + i] / this.turns
       }
-      console.log(xs);
-      console.log(ys);
+      //console.log(expectedTurns);
       return {
         xs: xs,
         ys: ys
@@ -53,33 +52,38 @@ export default {
     },
 
     step: function(deck) {
-      console.log('step');
+      let turns2shuffle = 1;
       for (let i=0; i < this.turnsPerStep; i++) {
-        const key = '' + deck.damage(this.baseDamage);
-        if (this.damageDist[key] === undefined) {
-          this.damageDist[key] = 0;
+        if (deck.status()) {
+          //console.log(turns2shuffle);
+          const key = '' + turns2shuffle;
+          if (this.damageDist[key] === undefined) {
+            this.damageDist[key] = 0;
+          }
+          this.damageDist[key]++;
+          turns2shuffle = 1;
+          this.turns ++;
         }
-        this.damageDist[key]++;
+        else {
+          turns2shuffle++;
+        }
       }
-      this.turns += this.turnsPerStep;
 
-      console.log(this.damageDist);
       return this.computeData();
+
+
+
     },
 
     reset: function() {
-      console.log('reset');
       this.turns = 0;
       this.damageDist = {};
       return this.computeData();
     },
 
     converged: function(newValues, currentValues) {
-      console.log('converged');
       const newYs = newValues.ys;
       const currentYs = currentValues.ys;
-      console.log(newYs);
-      console.log(currentYs);
       if (newYs.length !== currentYs.length) {
         return false;
       }

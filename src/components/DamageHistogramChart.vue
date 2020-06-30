@@ -68,7 +68,7 @@ export default {
     },
 
     converged: function(newValues, currentValues) {
-      //console.log('converged');
+        //console.log('converged');
       const newYs = newValues.ys;
       const currentYs = currentValues.ys;
       if (newYs.length !== currentYs.length) {
